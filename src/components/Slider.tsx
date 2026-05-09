@@ -28,7 +28,9 @@ export function Slider({ label, value, min, max, current, onChange, leftLabel, r
           max={max} 
           value={current}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full h-[2px] rounded-full appearance-none cursor-pointer outline-none slider-thumb-rect"
+          className="w-full h-[2px] rounded-full appearance-none cursor-pointer outline-none 
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[6px] [&::-webkit-slider-thumb]:h-[14px] [&::-webkit-slider-thumb]:bg-[#00D1FF] [&::-webkit-slider-thumb]:rounded-[1px] [&::-webkit-slider-thumb]:shadow-[0_0_8px_rgba(0,209,255,0.4)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-100 hover:[&::-webkit-slider-thumb]:scale-y-120
+            [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:w-[6px] [&::-moz-range-thumb]:h-[14px] [&::-moz-range-thumb]:bg-[#00D1FF] [&::-moz-range-thumb]:rounded-[1px] [&::-moz-range-thumb]:shadow-[0_0_8px_rgba(0,209,255,0.4)] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:duration-100 hover:[&::-moz-range-thumb]:scale-y-120"
           style={{
             background: `linear-gradient(to right, #4A5568 ${percentage}%, #2D3748 ${percentage}%)` // It's actually a dark track, wait, looking at image... The track left of thumb is slightly lighter grey, track right is darker grey. Let's use #4A5568 and #2D3748.
           }}
