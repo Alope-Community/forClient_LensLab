@@ -11,7 +11,7 @@ export function Accordion({ title, content, icon }: AccordionProps) {
   const [isOpen, setIsOpen] = useState(title === "APERTURE & DOF");
 
   return (
-    <div className="border border-white/5 rounded-lg bg-[#1F2125] overflow-hidden transition-all duration-300">
+    <div className="border border-white/5 rounded-lg bg-surface overflow-hidden transition-all duration-300">
       <button 
         className="w-full flex items-center justify-between p-4 text-left hover:bg-white/5 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
