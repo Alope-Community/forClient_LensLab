@@ -3,30 +3,54 @@ import { Navbar } from "./components/Navbar";
 import { Slider } from "./components/Slider";
 import { Accordion } from "./components/Accordion";
 import { IconCamera, IconClock, IconSparklesThree, IconCameraFill } from "justd-icons";
+import { ExposureCanvas } from "./components/canvas/ExposureCanvas";
+
+import { calcStops } from "./utils/cameraMath"
+import { ExposureMeter } from "./components/ExposureMeter";
+
 
 function App() {
   const [aperture, setAperture] = useState(5.6);
   const [shutter, setShutter] = useState(250);
   const [iso, setIso] = useState(100);
 
+  const stops = calcStops(
+    aperture,
+    1 / shutter,
+    iso
+  )
+
+  const exposureStatus =
+    stops > 2
+      ? "Underexposed"
+      : stops < -2
+        ? "Overexposed"
+        : "Balanced"
+
   return (
     <div className="min-h-screen bg-neutral text-white font-inter selection:bg-primary/30 pb-12">
       <Navbar />
-      
+
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
+
           {/* Left Column - Image Preview & Stats */}
           <div className="lg:col-span-8 space-y-4">
             <div className="relative w-full aspect-square md:aspect-[4/3] rounded-sm overflow-hidden border border-white/5 bg-surface">
-              <img 
+              {/* <img 
                 src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop" 
                 alt="Camera Lens Simulation" 
                 className="w-full h-full object-cover"
+              /> */}
+
+              <ExposureCanvas
+                iso={iso}
+                aperture={aperture}
+                shutter={1 / shutter}
               />
-              
+
               {/* Overlay stats inside image (EV scale) */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 bg-black/40 backdrop-blur-md px-6 py-2 rounded-xl border border-white/10">
+              {/* <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 bg-black/40 backdrop-blur-md px-6 py-2 rounded-xl border border-white/10">
                 <div className="w-2 h-2 rotate-45 bg-primary mb-1"></div>
                 <div className="flex items-center gap-4 text-[10px] text-white/70 font-mono">
                   <span>-3</span>
@@ -36,9 +60,10 @@ function App() {
                   <span>+3</span>
                 </div>
                 <span className="text-[9px] uppercase tracking-widest text-white/50 mt-1">EV</span>
-              </div>
+              </div> */}
+              <ExposureMeter stops={stops} />
             </div>
-            
+
             {/* Stat Boxes */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-surface border border-white/5 rounded-lg p-4">
@@ -48,7 +73,7 @@ function App() {
                   <span className="text-[11px] text-tertiary">15mm Bokeh</span>
                 </div>
               </div>
-              
+
               <div className="bg-surface border border-white/5 rounded-lg p-4">
                 <div className="text-[10px] font-inter text-tertiary uppercase tracking-widest mb-1">Shutter</div>
                 <div className="flex items-baseline gap-2">
@@ -56,7 +81,7 @@ function App() {
                   <span className="text-[11px] text-tertiary">Frozen</span>
                 </div>
               </div>
-              
+
               <div className="bg-surface border border-white/5 rounded-lg p-4">
                 <div className="text-[10px] font-inter text-tertiary uppercase tracking-widest mb-1">ISO</div>
                 <div className="flex items-baseline gap-2">
@@ -69,42 +94,52 @@ function App() {
 
           {/* Right Column - Controls & Accordions */}
           <div className="lg:col-span-4 space-y-4">
-            
+
+            <div className="bg-surface border border-white/5 rounded-lg p-4">
+              <div className="text-[10px] uppercase tracking-widest text-tertiary mb-1">
+                Exposure Status
+              </div>
+
+              <div className="text-2xl font-grotesk">
+                {exposureStatus}
+              </div>
+            </div>
+
             {/* Exposure Controls Box */}
             <div className="bg-surface border border-white/5 rounded-lg p-6">
               <h2 className="text-xl font-grotesk font-semibold text-white mb-6">Exposure Controls</h2>
               <div className="w-full h-px bg-white/5 mb-8"></div>
-              
+
               <div className="space-y-8">
-                <Slider 
-                  label="Aperture (f-stop)" 
+                <Slider
+                  label="Aperture (f-stop)"
                   value={`f/${aperture.toFixed(1)}`}
-                  min={1.2} 
-                  max={22} 
-                  current={aperture} 
-                  onChange={setAperture} 
+                  min={1.2}
+                  max={22}
+                  current={aperture}
+                  onChange={setAperture}
                   leftLabel="Shallow DOF"
                   rightLabel="Deep DOF"
                 />
-                
-                <Slider 
-                  label="Shutter Speed" 
+
+                <Slider
+                  label="Shutter Speed"
                   value={`1/${shutter}s`}
-                  min={1} 
-                  max={4000} 
-                  current={shutter} 
-                  onChange={setShutter} 
+                  min={1}
+                  max={4000}
+                  current={shutter}
+                  onChange={setShutter}
                   leftLabel="Motion Blur"
                   rightLabel="Freeze Motion"
                 />
-                
-                <Slider 
-                  label="ISO Sensitivity" 
+
+                <Slider
+                  label="ISO Sensitivity"
                   value={iso.toString()}
-                  min={100} 
-                  max={6400} 
-                  current={iso} 
-                  onChange={setIso} 
+                  min={100}
+                  max={6400}
+                  current={iso}
+                  onChange={setIso}
                   leftLabel="Low Noise"
                   rightLabel="High Grain"
                 />
@@ -119,24 +154,24 @@ function App() {
             </div>
 
             {/* Accordions */}
-            <div className="space-y-2">
-               <Accordion 
-                 title="APERTURE & DOF" 
-                 icon={<IconCamera className="w-4 h-4" />}
-                 content="Controls how much light passes through the lens and determines depth of field. Lower f-numbers create that cinematic blurred background."
-               />
-               <Accordion 
-                 title="SHUTTER & MOTION" 
-                 icon={<IconClock className="w-4 h-4" />}
-                 content="Shutter speed dictates how long the sensor is exposed to light. Fast speeds (e.g., 1/1000s) freeze fast-moving action, while slow speeds introduce motion blur, perfect for waterfalls or light trails."
-               />
-               <Accordion 
-                 title="ISO & NOISE" 
-                 icon={<IconSparklesThree className="w-4 h-4" />}
-                 content="ISO measures the sensor's sensitivity to light. Higher ISO values allow shooting in darker environments but introduce digital grain or 'noise' to the image. Keep it as low as possible for clean shots."
-               />
-            </div>
-            
+            {/* <div className="space-y-2">
+              <Accordion
+                title="APERTURE & DOF"
+                icon={<IconCamera className="w-4 h-4" />}
+                content="Controls how much light passes through the lens and determines depth of field. Lower f-numbers create that cinematic blurred background."
+              />
+              <Accordion
+                title="SHUTTER & MOTION"
+                icon={<IconClock className="w-4 h-4" />}
+                content="Shutter speed dictates how long the sensor is exposed to light. Fast speeds (e.g., 1/1000s) freeze fast-moving action, while slow speeds introduce motion blur, perfect for waterfalls or light trails."
+              />
+              <Accordion
+                title="ISO & NOISE"
+                icon={<IconSparklesThree className="w-4 h-4" />}
+                content="ISO measures the sensor's sensitivity to light. Higher ISO values allow shooting in darker environments but introduce digital grain or 'noise' to the image. Keep it as low as possible for clean shots."
+              />
+            </div> */}
+
           </div>
 
         </div>

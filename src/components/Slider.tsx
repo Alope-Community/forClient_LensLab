@@ -1,5 +1,3 @@
-import React from "react";
-
 interface SliderProps {
   label: string;
   value: string;
@@ -13,19 +11,19 @@ interface SliderProps {
 
 export function Slider({ label, value, min, max, current, onChange, leftLabel, rightLabel }: SliderProps) {
   const percentage = ((current - min) / (max - min)) * 100;
-  
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex justify-between items-center mb-3">
         <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/80 uppercase">{label}</span>
         <span className="font-inter text-sm text-primary">{value}</span>
       </div>
-      
+
       <div className="relative py-2">
-        <input 
-          type="range" 
-          min={min} 
-          max={max} 
+        <input
+          type="range"
+          min={min}
+          max={max}
           value={current}
           onChange={(e) => onChange(Number(e.target.value))}
           className="w-full h-[2px] rounded-full appearance-none cursor-pointer outline-none 
