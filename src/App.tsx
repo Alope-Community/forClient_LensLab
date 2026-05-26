@@ -1,9 +1,6 @@
 import { useState } from "react";
-import { Navbar } from "./components/Navbar";
-import { Slider } from "./components/Slider";
-import { Accordion } from "./components/Accordion";
-import { IconCamera, IconClock, IconSparklesThree, IconCameraFill } from "justd-icons";
-import { ExposureCanvas } from "./components/canvas/ExposureCanvas";
+import { Navbar, Slider, ThreeScene } from "./components";
+import { IconCameraFill } from "justd-icons";
 
 import { calcStops } from "./utils/cameraMath"
 import { ExposureMeter } from "./components/ExposureMeter";
@@ -13,6 +10,7 @@ function App() {
   const [aperture, setAperture] = useState(5.6);
   const [shutter, setShutter] = useState(250);
   const [iso, setIso] = useState(100);
+  const [lightRotation, setLightRotation] = useState(0);
 
   const stops = calcStops(
     aperture,
@@ -43,10 +41,11 @@ function App() {
                 className="w-full h-full object-cover"
               /> */}
 
-              <ExposureCanvas
+              <ThreeScene
                 iso={iso}
                 aperture={aperture}
                 shutter={1 / shutter}
+                lightRotation={lightRotation}
               />
 
               {/* Overlay stats inside image (EV scale) */}
@@ -61,7 +60,12 @@ function App() {
                 </div>
                 <span className="text-[9px] uppercase tracking-widest text-white/50 mt-1">EV</span>
               </div> */}
-              <ExposureMeter stops={stops} />
+            </div>
+
+            <div className="grid gap-4">
+              <div className="bg-surface border border-white/5 rounded-lg pb-5">
+                <ExposureMeter stops={stops} />
+              </div>
             </div>
 
             {/* Stat Boxes */}
@@ -142,6 +146,17 @@ function App() {
                   onChange={setIso}
                   leftLabel="Low Noise"
                   rightLabel="High Grain"
+                />
+
+                <Slider
+                  label="Light Rotation"
+                  value={`${lightRotation.toFixed(0)}°`}
+                  min={0}
+                  max={360}
+                  current={lightRotation}
+                  onChange={setLightRotation}
+                  leftLabel="Front"
+                  rightLabel="Back"
                 />
               </div>
 

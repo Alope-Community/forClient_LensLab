@@ -8,7 +8,7 @@ interface AccordionProps {
 }
 
 export function Accordion({ title, content, icon }: AccordionProps) {
-  const [isOpen, setIsOpen] = useState(title === "APERTURE & DOF");
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="border border-white/5 rounded-lg bg-surface overflow-hidden transition-all duration-300">
