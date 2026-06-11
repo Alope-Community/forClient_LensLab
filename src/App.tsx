@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Navbar, Slider, ThreeScene } from "./components";
 import { IconCameraFill } from "justd-icons";
 
-import { calcStops } from "./utils/cameraMath"
+import { calcStops } from "./utils/cameraMath";
 import { ExposureMeter } from "./components/ExposureMeter";
-
 
 function App() {
   const [aperture, setAperture] = useState(5.6);
@@ -12,18 +11,10 @@ function App() {
   const [iso, setIso] = useState(100);
   const [lightRotation, setLightRotation] = useState(0);
 
-  const stops = calcStops(
-    aperture,
-    1 / shutter,
-    iso
-  )
+  const stops = calcStops(aperture, 1 / shutter, iso);
 
   const exposureStatus =
-    stops > 2
-      ? "Underexposed"
-      : stops < -2
-        ? "Overexposed"
-        : "Balanced"
+    stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
 
   return (
     <div className="min-h-screen bg-neutral text-white font-inter selection:bg-primary/30 pb-12">
@@ -31,7 +22,6 @@ function App() {
 
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
           {/* Left Column - Image Preview & Stats */}
           <div className="lg:col-span-8 space-y-4">
             <div className="relative w-full aspect-square md:aspect-[4/3] rounded-sm overflow-hidden border border-white/5 bg-surface">
@@ -64,54 +54,65 @@ function App() {
 
             <div className="grid gap-4">
               <div className="bg-surface border border-white/5 rounded-lg pb-5">
-                <ExposureMeter stops={stops} />
+                <ExposureMeter stops={stops} exposureStatus={exposureStatus} />
               </div>
             </div>
 
             {/* Stat Boxes */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-surface border border-white/5 rounded-lg p-4">
-                <div className="text-[10px] font-inter text-tertiary uppercase tracking-widest mb-1">Aperture</div>
+            {/* <div className="grid grid-cols-3 gap-4">
+              <div className="bg-surface border border-white/5 rounded-lg md:p-4 p-3">
+                <div className="text-xs font-inter text-tertiary uppercase tracking-widest mb-1">
+                  Aperture
+                </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-grotesk text-white">f/{aperture.toFixed(1)}</span>
-                  <span className="text-[11px] text-tertiary">15mm Bokeh</span>
+                  <span className="md:text-2xl font-grotesk text-white">
+                    f/{aperture.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-tertiary">15mm</span>
                 </div>
               </div>
 
-              <div className="bg-surface border border-white/5 rounded-lg p-4">
-                <div className="text-[10px] font-inter text-tertiary uppercase tracking-widest mb-1">Shutter</div>
+              <div className="bg-surface border border-white/5 rounded-lg md:p-4 p-3">
+                <div className="text-xs font-inter text-tertiary uppercase tracking-widest mb-1">
+                  Shutter
+                </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-grotesk text-white">1/{shutter}s</span>
-                  <span className="text-[11px] text-tertiary">Frozen</span>
+                  <span className="md:text-2xl font-grotesk text-white">
+                    1/{shutter}s
+                  </span>
+                  <span className="text-xs text-tertiary">Frozen</span>
                 </div>
               </div>
 
-              <div className="bg-surface border border-white/5 rounded-lg p-4">
-                <div className="text-[10px] font-inter text-tertiary uppercase tracking-widest mb-1">ISO</div>
+              <div className="bg-surface border border-white/5 rounded-lg md:p-4 p-3">
+                <div className="text-xs font-inter text-tertiary uppercase tracking-widest mb-1">
+                  ISO
+                </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-grotesk text-white">{iso}</span>
-                  <span className="text-[11px] text-tertiary">Clean</span>
+                  <span className="md:text-2xl font-grotesk text-white">
+                    {iso}
+                  </span>
+                  <span className="text-xs text-tertiary">Clean</span>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column - Controls & Accordions */}
           <div className="lg:col-span-4 space-y-4">
-
-            <div className="bg-surface border border-white/5 rounded-lg p-4">
+            {/* <div className="bg-surface border border-white/5 rounded-lg p-4">
               <div className="text-[10px] uppercase tracking-widest text-tertiary mb-1">
                 Exposure Status
               </div>
 
-              <div className="text-2xl font-grotesk">
-                {exposureStatus}
-              </div>
-            </div>
+              <div className="text-2xl font-grotesk">{exposureStatus}</div>
+            </div> */}
 
             {/* Exposure Controls Box */}
             <div className="bg-surface border border-white/5 rounded-lg p-6">
-              <h2 className="text-xl font-grotesk font-semibold text-white mb-6">Exposure Controls</h2>
+              <h2 className="text-xl font-grotesk font-semibold text-white mb-6">
+                Exposure Controls
+              </h2>
               <div className="w-full h-px bg-white/5 mb-8"></div>
 
               <div className="space-y-8">
@@ -186,9 +187,7 @@ function App() {
                 content="ISO measures the sensor's sensitivity to light. Higher ISO values allow shooting in darker environments but introduce digital grain or 'noise' to the image. Keep it as low as possible for clean shots."
               />
             </div> */}
-
           </div>
-
         </div>
       </main>
     </div>
