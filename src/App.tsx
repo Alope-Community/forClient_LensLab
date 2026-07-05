@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { Navbar, Slider, ThreeScene } from "./components";
+import { useEffect, useState } from "react";
+import { Navbar, Slider } from "./components";
+// export { default as ThreeScene } from "";
 import { IconCameraFill } from "justd-icons";
 
 import { calcStops } from "./utils/cameraMath";
 import { ExposureMeter } from "./components/ExposureMeter";
+import ThreeScene from "./components/ThreeScene";
 
 function App() {
   const [aperture, setAperture] = useState(5.6);
@@ -15,6 +17,11 @@ function App() {
 
   const exposureStatus =
     stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
+
+
+  useEffect(() => {
+    console.log(`Aperture: f/${aperture.toFixed(1)}, Shutter: 1/${shutter}s, ISO: ${iso}, Light Rotation: ${lightRotation.toFixed(0)}°`);
+  }, [aperture, shutter, iso, lightRotation]);
 
   return (
     <div className="min-h-screen bg-neutral text-white font-inter selection:bg-primary/30 pb-12">
