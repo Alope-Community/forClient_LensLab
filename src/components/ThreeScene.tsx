@@ -12,7 +12,18 @@ type ThreeSceneProps = {
   iso: number;
   aperture: number;
   shutter: number;
+
+  lightEnabled: boolean;
+
+  keyLightEnabled: boolean;
   lightRotation: number;
+  lightHeight: number;
+  lightDistance: number;
+
+  reflectorEnabled: boolean;
+  reflectorRotation: number;
+  reflectorHeight: number;
+  reflectorDistance: number;
 };
 
 function Mannequin() {
@@ -85,21 +96,47 @@ export default function ThreeScene({
   iso,
   aperture,
   shutter,
+
+  lightEnabled,
+
+  keyLightEnabled,
   lightRotation,
+  lightHeight,
+  lightDistance,
+
+  reflectorEnabled,
+  reflectorRotation,
+  reflectorHeight,
+  reflectorDistance,
 }: ThreeSceneProps) {
 
   const directionalPosition = useMemo(() => {
-    const radius = 5;
     const rad = THREE.MathUtils.degToRad(lightRotation);
 
     return [
-      Math.sin(rad) * radius,
-      -1.5,
-      Math.cos(rad) * radius,
+      Math.sin(rad) * lightDistance,
+      lightHeight,
+      Math.cos(rad) * lightDistance,
     ] as [number, number, number];
-  }, [lightRotation]);
+  }, [
+    lightRotation,
+    lightDistance,
+    lightHeight,
+  ]);
 
-  const pointLightPosition: [number, number, number] = [0, -2, 2];
+  const pointLightPosition = useMemo(() => {
+    const rad = THREE.MathUtils.degToRad(reflectorRotation);
+
+    return [
+      Math.sin(rad) * reflectorDistance,
+      reflectorHeight,
+      Math.cos(rad) * reflectorDistance,
+    ] as [number, number, number];
+  }, [
+    reflectorRotation,
+    reflectorDistance,
+    reflectorHeight,
+  ]);
 
   return (
     <Canvas
@@ -117,31 +154,39 @@ export default function ThreeScene({
 
       <color attach="background" args={["#2b2b2b"]} />
 
-      <ambientLight intensity={0.25} />
+      <ambientLight
+        intensity={lightEnabled ? 0.25 : 0}
+      />
 
       <directionalLight
         position={directionalPosition}
-        intensity={10}
+        intensity={lightEnabled && keyLightEnabled ? 10 : 0}
         castShadow
         shadow-mapSize-width={2048}
         shadow-mapSize-height={2048}
       />
 
-      <LightMarker
-        position={directionalPosition}
-        color="#ffff00"
-        radius={0.12}
-      />
-
       <pointLight
         position={pointLightPosition}
-        intensity={25}
+        intensity={lightEnabled && reflectorEnabled ? 4 : 0}
+        distance={20}
+        decay={2}
       />
 
-      <LightMarker
-        position={pointLightPosition}
-        color="#ff0000"
-      />
+      {lightEnabled && keyLightEnabled && (
+        <LightMarker
+          position={directionalPosition}
+          color="#FFD700"
+          radius={0.12}
+        />
+      )}
+
+      {lightEnabled && reflectorEnabled && (
+        <LightMarker
+          position={pointLightPosition}
+          color="#00BFFF"
+        />
+      )}
 
       <Environment preset="studio" />
 
@@ -165,20 +210,6 @@ export default function ThreeScene({
         enableDamping
         makeDefault
         target={[0, -2, 0]}
-      // onChange={(e) => {
-      //   if (!e) return;
-
-      //   const cam = e.target.object;
-      //   const tgt = e.target.target;
-
-      //   console.clear();
-      //   console.log(
-      //     `POSISI AWAL KAMERA ANDA:\n` +
-      //     `camera={{ position: [${cam.position.x.toFixed(2)}, ${cam.position.y.toFixed(2)}, ${cam.position.z.toFixed(2)}], fov: 5 }}\n\n` +
-      //     `TARGET ORBITCONTROLS ANDA:\n` +
-      //     `target={[${tgt.x.toFixed(2)}, ${tgt.y.toFixed(2)}, ${tgt.z.toFixed(2)}]}`
-      //   );
-      // }}
       />
     </Canvas>
   );
