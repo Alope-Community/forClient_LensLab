@@ -84,22 +84,20 @@ function App() {
                 <button
                   type="button"
                   onClick={() => setSelectedModel("model1")}
-                  className={`py-2 px-4 text-xs font-medium rounded-md transition-all ${
-                    selectedModel === "model1"
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
-                  }`}
+                  className={`py-2 px-4 text-xs font-medium rounded-md transition-all ${selectedModel === "model1"
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
+                    }`}
                 >
                   Mannequin
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedModel("model2")}
-                  className={`py-2 px-4 text-xs font-medium rounded-md transition-all ${
-                    selectedModel === "model2"
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
-                  }`}
+                  className={`py-2 px-4 text-xs font-medium rounded-md transition-all ${selectedModel === "model2"
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
+                    }`}
                 >
                   Cosmetics Product
                 </button>
@@ -121,22 +119,20 @@ function App() {
                 <button
                   type="button"
                   onClick={() => setActiveTab("camera")}
-                  className={`py-2.5 text-xs font-semibold rounded-md transition-all ${
-                    activeTab === "camera"
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
-                  }`}
+                  className={`py-2.5 text-xs font-semibold rounded-md transition-all ${activeTab === "camera"
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
+                    }`}
                 >
                   Camera & Exposure
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab("lighting")}
-                  className={`py-2.5 text-xs font-semibold rounded-md transition-all ${
-                    activeTab === "lighting"
-                      ? "bg-primary text-white shadow-md shadow-primary/20"
-                      : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
-                  }`}
+                  className={`py-2.5 text-xs font-semibold rounded-md transition-all ${activeTab === "lighting"
+                    ? "bg-primary text-white shadow-md shadow-primary/20"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.02]"
+                    }`}
                 >
                   Studio Lighting
                 </button>
@@ -238,12 +234,14 @@ function App() {
                       max1={3}
                       cur1={lightHeight}
                       chg1={setLightHeight}
+                      step1={0.5}
                       label2="Distance"
                       val2={`${lightDistance.toFixed(1)}m`}
                       min2={1}
                       max2={8}
                       cur2={lightDistance}
                       chg2={setLightDistance}
+                      step2={0.5}
                     />
                   </div>
 
@@ -283,12 +281,14 @@ function App() {
                       max1={3}
                       cur1={fillLightHeight}
                       chg1={setFillLightHeight}
+                      step1={0.5}
                       label2="Distance"
                       val2={`${fillLightDistance.toFixed(1)}m`}
                       min2={1}
                       max2={8}
                       cur2={fillLightDistance}
                       chg2={setFillLightDistance}
+                      step2={0.5}
                     />
                   </div>
 
@@ -328,12 +328,14 @@ function App() {
                       max1={2}
                       cur1={reflectorHeight}
                       chg1={setReflectorHeight}
+                      step1={0.5}
                       label2="Distance"
                       val2={`${reflectorDistance.toFixed(1)}m`}
                       min2={1}
                       max2={5}
                       cur2={reflectorDistance}
                       chg2={setReflectorDistance}
+                      step2={0.5}
                     />
                   </div>
                 </div>
@@ -360,12 +362,14 @@ function SideBySideSliders({
   max1,
   cur1,
   chg1,
+  step1 = 1,
   label2,
   val2,
   min2,
   max2,
   cur2,
   chg2,
+  step2 = 1,
 }: any) {
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -376,6 +380,7 @@ function SideBySideSliders({
         max={max1}
         current={cur1}
         onChange={chg1}
+        step={step1}
         compact
       />
       <Slider
@@ -385,6 +390,7 @@ function SideBySideSliders({
         max={max2}
         current={cur2}
         onChange={chg2}
+        step={step2}
         compact
       />
     </div>

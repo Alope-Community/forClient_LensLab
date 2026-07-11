@@ -5,6 +5,7 @@ interface SliderProps {
   max: number;
   current: number;
   onChange: (val: number) => void;
+  step?: number;
   leftLabel?: string;
   rightLabel?: string;
   compact?: boolean;
@@ -17,6 +18,7 @@ export function Slider({
   max,
   current,
   onChange,
+  step = 1,
   leftLabel,
   rightLabel,
   compact = false,
@@ -41,8 +43,9 @@ export function Slider({
           type="range"
           min={min}
           max={max}
+          step={step}
           value={current}
-          onChange={(e) => onChange(Number(e.target.value))}
+          onChange={(e) => onChange(Number(e.target.value))} // Tetap aman untuk integer maupun desimal
           className="w-full h-[2px] rounded-full appearance-none cursor-pointer outline-none 
             [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-[6px] [&::-webkit-slider-thumb]:h-[14px] [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:rounded-[1px] [&::-webkit-slider-thumb]:shadow-[0_0_8px_theme(colors.primary/40%)] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-100 hover:[&::-webkit-slider-thumb]:scale-y-120
             [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:border-none [&::-moz-range-thumb]:w-[6px] [&::-moz-range-thumb]:h-[14px] [&::-moz-range-thumb]:bg-primary [&::-moz-range-thumb]:rounded-[1px] [&::-moz-range-thumb]:shadow-[0_0_8px_theme(colors.primary/40%)] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:transition-transform [&::-moz-range-thumb]:duration-100 hover:[&::-moz-range-thumb]:scale-y-120"

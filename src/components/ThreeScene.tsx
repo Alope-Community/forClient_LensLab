@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useState, useRef } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
   ContactShadows,
@@ -100,6 +100,7 @@ function CameraManager({
   return null;
 }
 
+// === KOMPONEN LIGHT MARKER YANG SUDAH DIPERBARUI ===
 function LightMarker({
   position,
   color = "#ff0000",
@@ -109,10 +110,34 @@ function LightMarker({
   color?: string;
   radius?: number;
 }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    // Lewati trigger saat pertama kali scene dimuat agar tidak langsung muncul
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Munculkan marker ketika koordinat posisi berubah
+    setIsVisible(true);
+
+    // Sembunyikan kembali setelah 1 detik jika tidak ada pergeseran lagi
+    const timeout = setTimeout(() => {
+      setIsVisible(false);
+    }, 1000);
+
+    return () => clearTimeout(timeout);
+  }, [position]);
+
+  if (!isVisible) return null;
+
   return (
     <mesh position={position}>
       <sphereGeometry args={[radius, 32, 32]} />
-      <meshBasicMaterial color={color} />
+      {/* toneMapped={false} membuat marker kebal dari efek simulasi exposure kamera */}
+      <meshBasicMaterial color={color} toneMapped={false} />
     </mesh>
   );
 }
@@ -214,7 +239,7 @@ export default function ThreeScene({
         decay={2}
       />
 
-      {/* MARKERS */}
+      {/* MARKERS (Sekarang otomatis mengontrol visibilitasnya sendiri di dalam komponen) */}
       {lightEnabled && keyLightEnabled && (
         <LightMarker
           position={directionalPosition1}
