@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar, Slider } from "./components";
 import { IconCameraFill } from "justd-icons";
+import { useTranslation } from "react-i18next";
 
 import { calcStops } from "./utils/cameraMath";
 import { ExposureMeter } from "./components/ExposureMeter";
@@ -10,6 +11,8 @@ import { Button } from "./components/button/Button";
 import Footer from "./components/footer/Footer";
 
 function App() {
+  const { t } = useTranslation();
+
   const [aperture, setAperture] = useState(5.6);
   const [shutter, setShutter] = useState(250);
   const [iso, setIso] = useState(100);
@@ -73,14 +76,14 @@ function App() {
               />
             </div>
 
-            {/* SELEKSI MODEL (Pindah ke bawah Canvas) */}
+            {/* SELEKSI MODEL */}
             <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex flex-col">
                 <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/50 uppercase">
-                  Product Subject
+                  {t("productSubject")}
                 </span>
                 <span className="text-sm font-medium text-white/90">
-                  Select Model Scene
+                  {t("selectModelScene")}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2 p-1 bg-neutral rounded-lg border border-white/5 min-w-[280px]">
@@ -91,7 +94,7 @@ function App() {
                   isActive={selectedModel === "model1"}
                   onClick={() => setSelectedModel("model1")}
                 >
-                  Mannequin
+                  {t("models.model1")}
                 </Button>
 
                 <Button
@@ -101,7 +104,7 @@ function App() {
                   isActive={selectedModel === "model2"}
                   onClick={() => setSelectedModel("model2")}
                 >
-                  Cosmetics Product
+                  {t("models.model2")}
                 </Button>
               </div>
             </div>
@@ -113,8 +116,9 @@ function App() {
             </div>
           </div>
 
-          {/* Right Column - Controls (Tabs Only) */}
+          {/* Right Column - Controls (With Language Switcher) */}
           <div className="lg:col-span-4 space-y-4">
+
             <div className="bg-surface border border-white/5 rounded-lg p-6 max-h-[85vh] overflow-y-auto custom-scrollbar">
               {/* TAB NAVIGATION */}
               <div className="grid grid-cols-2 gap-2 p-1 bg-neutral rounded-lg border border-white/5 mb-6">
@@ -124,7 +128,7 @@ function App() {
                   isActive={activeTab === "camera"}
                   onClick={() => setActiveTab("camera")}
                 >
-                  Camera & Exposure
+                  {t("cameraExposure")}
                 </Button>
 
                 <Button
@@ -133,7 +137,7 @@ function App() {
                   isActive={activeTab === "lighting"}
                   onClick={() => setActiveTab("lighting")}
                 >
-                  Studio Lighting
+                  {t("studioLighting")}
                 </Button>
               </div>
 
@@ -182,10 +186,10 @@ function App() {
                   <div className="flex items-center justify-between rounded-lg border border-gray-700 bg-gray-800 px-4 py-3">
                     <div>
                       <h3 className="text-sm font-medium text-white">
-                        Master Studio Light
+                        {t("masterLight")}
                       </h3>
                       <p className="text-xs text-gray-400">
-                        Enable / Disable All Lights
+                        {t("masterLightDesc")}
                       </p>
                     </div>
                     <label className="relative inline-flex cursor-pointer items-center">
@@ -209,7 +213,7 @@ function App() {
                     <div className="space-y-4 border border-white/5 p-4 rounded-lg bg-white/[0.02]">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <h3 className="text-sm font-semibold text-yellow-400">
-                          Key Light (Cahaya 1)
+                          {t("keyLight")}
                         </h3>
                         <label className="relative inline-flex cursor-pointer items-center scale-90">
                           <input
@@ -223,7 +227,7 @@ function App() {
                         </label>
                       </div>
                       <Slider
-                        label="Rotation"
+                        label={t("rotation")}
                         value={`${lightRotation.toFixed(0)}°`}
                         min={0}
                         max={360}
@@ -233,14 +237,14 @@ function App() {
                         rightLabel="Back"
                       />
                       <SideBySideSliders
-                        label1="Height"
+                        label1={t("height")}
                         val1={`${lightHeight.toFixed(1)}m`}
                         min1={-2}
                         max1={3}
                         cur1={lightHeight}
                         chg1={setLightHeight}
                         step1={0.5}
-                        label2="Distance"
+                        label2={t("distance")}
                         val2={`${lightDistance.toFixed(1)}m`}
                         min2={1}
                         max2={8}
@@ -254,7 +258,7 @@ function App() {
                     <div className="space-y-4 border border-white/5 p-4 rounded-lg bg-white/[0.02]">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <h3 className="text-sm font-semibold text-orange-400">
-                          Fill Light (Cahaya 2)
+                          {t("fillLight")}
                         </h3>
                         <label className="relative inline-flex cursor-pointer items-center scale-90">
                           <input
@@ -270,7 +274,7 @@ function App() {
                         </label>
                       </div>
                       <Slider
-                        label="Rotation"
+                        label={t("rotation")}
                         value={`${fillLightRotation.toFixed(0)}°`}
                         min={0}
                         max={360}
@@ -280,14 +284,14 @@ function App() {
                         rightLabel="Back"
                       />
                       <SideBySideSliders
-                        label1="Height"
+                        label1={t("height")}
                         val1={`${fillLightHeight.toFixed(1)}m`}
                         min1={-2}
                         max1={3}
                         cur1={fillLightHeight}
                         chg1={setFillLightHeight}
                         step1={0.5}
-                        label2="Distance"
+                        label2={t("distance")}
                         val2={`${fillLightDistance.toFixed(1)}m`}
                         min2={1}
                         max2={8}
@@ -301,8 +305,7 @@ function App() {
                     <div className="space-y-4 border border-white/5 p-4 rounded-lg bg-white/[0.02]">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <h3 className="text-sm font-semibold text-blue-400">
-                          Reflector
-                          {/* (Point Light) */}
+                          {t("reflector")}
                         </h3>
                         <label className="relative inline-flex cursor-pointer items-center">
                           <input
@@ -318,7 +321,7 @@ function App() {
                         </label>
                       </div>
                       <Slider
-                        label="Rotation"
+                        label={t("rotation")}
                         value={`${reflectorRotation.toFixed(0)}°`}
                         min={0}
                         max={360}
@@ -328,14 +331,14 @@ function App() {
                         rightLabel="Right"
                       />
                       <SideBySideSliders
-                        label1="Height"
+                        label1={t("height")}
                         val1={`${reflectorHeight.toFixed(1)}m`}
                         min1={-2}
                         max1={2}
                         cur1={reflectorHeight}
                         chg1={setReflectorHeight}
                         step1={0.5}
-                        label2="Distance"
+                        label2={t("distance")}
                         val2={`${reflectorDistance.toFixed(1)}m`}
                         min2={1}
                         max2={5}
@@ -351,7 +354,7 @@ function App() {
               <div className="mt-8 pt-6 border-t border-white/5">
                 <Button variant="primary">
                   <IconCameraFill className="w-5 h-5" />
-                  Capture Simulation
+                  {t("capture")}
                 </Button>
               </div>
             </div>
