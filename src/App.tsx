@@ -7,6 +7,7 @@ import { ExposureMeter } from "./components/ExposureMeter";
 import ThreeScene from "./components/ThreeScene";
 import SideBySideSliders from "./components/sliders/SideBySideSlider";
 import { Button } from "./components/button/Button";
+import Footer from "./components/footer/Footer";
 
 function App() {
   const [aperture, setAperture] = useState(5.6);
@@ -46,7 +47,7 @@ function App() {
     <div className="min-h-screen bg-neutral text-white font-inter selection:bg-primary/30 pb-12">
       <Navbar />
 
-      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 relative min-h-[calc(100vh-7rem)]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column - Image Preview & Model Selector */}
           <div className="lg:col-span-8 space-y-4">
@@ -300,7 +301,8 @@ function App() {
                     <div className="space-y-4 border border-white/5 p-4 rounded-lg bg-white/[0.02]">
                       <div className="flex items-center justify-between border-b border-white/5 pb-2">
                         <h3 className="text-sm font-semibold text-blue-400">
-                          Reflector (Point Light)
+                          Reflector
+                          {/* (Point Light) */}
                         </h3>
                         <label className="relative inline-flex cursor-pointer items-center">
                           <input
@@ -355,6 +357,9 @@ function App() {
             </div>
           </div>
         </div>
+
+        <Footer />
+
       </main>
     </div>
   );
