@@ -360,9 +360,7 @@ function App() {
             </div>
           </div>
         </div>
-
         <Footer />
-
       </main>
     </div>
   );
