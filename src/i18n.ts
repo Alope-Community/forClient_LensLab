@@ -20,7 +20,8 @@ const resources = {
             capture: "Capture Simulation",
             models: {
                 model1: "Mannequin",
-                model2: "Cosmetic Product"
+                model2: "Cosmetic Product",
+                model3: "Female Model"
             }
         }
     },
@@ -41,7 +42,8 @@ const resources = {
             capture: "Ambil Simulasi",
             models: {
                 model1: "Manekin",
-                model2: "Produk Kosmetik"
+                model2: "Produk Kosmetik",
+                model3: "Model Perempuan"
             }
         }
     }

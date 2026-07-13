@@ -13,7 +13,7 @@ type ThreeSceneProps = {
   aperture: number;
   shutter: number;
   lightEnabled: boolean;
-  selectedModel: "model1" | "model2";
+  selectedModel: "model1" | "model2" | "model3" | "model4" | "model5";
 
   keyLightEnabled: boolean;
   lightRotation: number;
@@ -57,13 +57,28 @@ function SecondModel() {
   return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
 }
 
+function ThirdModel() {
+  const { scene } = useGLTF("/models/female.glb");
+  useEffect(() => {
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+  return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
+}
+
 useGLTF.preload("/models/mannequin.glb");
 useGLTF.preload("/models/cosmetics__skin_care_product.glb");
+useGLTF.preload("/models/female.glb");
+
 
 function CameraManager({
   selectedModel,
 }: {
-  selectedModel: "model1" | "model2";
+  selectedModel: "model1" | "model2" | "model3" | "model4" | "model5";
 }) {
   const { camera, controls } = useThree();
 
@@ -71,24 +86,24 @@ function CameraManager({
     if (selectedModel === "model1") {
       camera.position.set(0.0, -2.0, 30);
       camera.lookAt(0, -2, 0);
+      if (controls) (controls as any).target.set(0, -2, 0);
 
-      if (controls) {
-        (controls as any).target.set(0, -2, 0);
-      }
+    } else if (selectedModel === "model3") {
+      camera.position.set(-0.03, 0.27, 21.14);
+      camera.lookAt(-0.00, -0.94, -0.40);
+      if (controls) (controls as any).target.set(-0.00, -0.94, -0.40);
+
     } else {
       camera.position.set(-5.18, 1.87, 1.52);
       camera.lookAt(-0.25, -1.78, 0.08);
-
-      if (controls) {
-        (controls as any).target.set(-0.25, -1.78, 0.08);
-      }
+      if (controls) (controls as any).target.set(-0.25, -1.78, 0.08);
     }
 
     camera.updateProjectionMatrix();
   }, [selectedModel, camera, controls]);
 
   useFrame(() => {
-    if (selectedModel === "model2" && controls) {
+    if (selectedModel === "model3" && controls) {
       const p = camera.position;
       const t = (controls as any).target;
       console.log(
@@ -256,7 +271,7 @@ export default function ThreeScene({
       <Environment preset="studio" />
 
       <Suspense fallback={null}>
-        {selectedModel === "model1" ? <Mannequin /> : <SecondModel />}
+        {selectedModel === "model1" ? <Mannequin /> : selectedModel === "model2" ? <SecondModel /> : <ThirdModel />}
       </Suspense>
 
       <ContactShadows

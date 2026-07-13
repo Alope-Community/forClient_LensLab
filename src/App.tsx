@@ -17,7 +17,7 @@ function App() {
   const [shutter, setShutter] = useState(250);
   const [iso, setIso] = useState(100);
 
-  const [selectedModel, setSelectedModel] = useState<"model1" | "model2">(
+  const [selectedModel, setSelectedModel] = useState<"model1" | "model2" | "model3" | "model4" | "model5">(
     "model1",
   );
   const [activeTab, setActiveTab] = useState<"camera" | "lighting">("camera");
@@ -45,6 +45,21 @@ function App() {
 
   const exposureStatus =
     stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
+
+
+  const MODELS_LIST = [
+    { id: "model1", name: "models.model1", thumbnail: "/thumbnails/mannequin.jpg" },
+    { id: "model2", name: "models.model2", thumbnail: "/thumbnails/cosmetics.jpg" },
+    { id: "model3", name: "models.model3", thumbnail: "/thumbnails/snack.jpg" },
+    { id: "model4", name: "models.model4", thumbnail: "/thumbnails/beverage.jpg" }, // Contoh objek ke-4
+    { id: "model5", name: "models.model5", thumbnail: "/thumbnails/electronics.jpg" }, // Contoh objek ke-5
+  ] as const;
+
+  // Di dalam komponen utama Anda:
+  const [isModelModalOpen, setIsModelModalOpen] = useState(false);
+
+  // Cari tahu model apa yang sedang aktif saat ini untuk ditampilkan namanya di tombol
+  const activeModelInfo = MODELS_LIST.find((m) => m.id === selectedModel);
 
   return (
     <div className="min-h-screen bg-neutral text-white font-inter selection:bg-primary/30 pb-12">
@@ -77,7 +92,7 @@ function App() {
             </div>
 
             {/* SELEKSI MODEL */}
-            <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex flex-col">
                 <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/50 uppercase">
                   {t("productSubject")}
@@ -106,8 +121,127 @@ function App() {
                 >
                   {t("models.model2")}
                 </Button>
+
+                <Button
+                  type="button"
+                  variant="tab"
+                  className="py-2"
+                  isActive={selectedModel === "model3"}
+                  onClick={() => setSelectedModel("model3")}
+                >
+                  {t("models.model3")}
+                </Button>
               </div>
+            </div> */}
+            {/* SELEKSI MODEL */}
+            <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col">
+                <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/50 uppercase">
+                  {t("productSubject")}
+                </span>
+                <span className="text-sm font-medium text-white/90">
+                  {t("selectModelScene")}
+                </span>
+              </div>
+
+              {/* Tombol Trigger untuk Membuka Popup */}
+              <button
+                type="button"
+                onClick={() => setIsModelModalOpen(true)}
+                className="flex items-center justify-between gap-3 px-4 py-2.5 bg-neutral border border-white/5 rounded-md text-xs font-medium text-white hover:bg-white/[0.04] transition-all min-w-[200px]"
+              >
+                <span>{activeModelInfo ? t(activeModelInfo.name) : "Select Model"}</span>
+                {/* Ikon panah kecil kebawah */}
+                <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
             </div>
+
+            {/* POPUP MODAL DI DALAM PORTAL / LAYER ATAS */}
+            {isModelModalOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                {/* Backdrop hitam transparan (Klik area luar untuk menutup) */}
+                <div
+                  className="absolute inset-0 bg-black/70 backdrop-blur-sm animate-fade-in"
+                  onClick={() => setIsModelModalOpen(false)}
+                />
+
+                {/* Kotak Modal Utama */}
+                <div className="relative w-full max-w-2xl bg-surface border border-white/10 rounded-xl p-6 shadow-2xl z-10 max-h-[90vh] overflow-y-auto custom-scrollbar animate-scale-in">
+                  {/* Header Modal */}
+                  <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-3">
+                    <div>
+                      <h3 className="text-base font-semibold text-white">
+                        {t("selectModelScene")}
+                      </h3>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        Pilih objek 3D subjek utama untuk simulasi studio foto
+                      </p>
+                    </div>
+                    {/* Tombol Close (X) */}
+                    <button
+                      onClick={() => setIsModelModalOpen(false)}
+                      className="text-gray-400 hover:text-white p-1 rounded-md hover:bg-white/5 transition-all"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Grid Thumbnail Pilihan Model (Mendukung 5 model atau lebih secara rapi) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {MODELS_LIST.map((model) => {
+                      const isSelected = selectedModel === model.id;
+                      return (
+                        <button
+                          key={model.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedModel(model.id);
+                            setIsModelModalOpen(false); // Menutup popup otomatis setelah memilih
+                          }}
+                          className={`group relative flex flex-col items-stretch text-left rounded-lg p-2 border transition-all cursor-pointer overflow-hidden ${isSelected
+                            ? "bg-primary/10 border-primary shadow-lg shadow-primary/10"
+                            : "bg-neutral border-white/5 hover:border-white/20 hover:bg-white/[0.02]"
+                            }`}
+                        >
+                          {/* Container Gambar Thumbnail */}
+                          <div className="aspect-square w-full rounded-md bg-black/40 overflow-hidden mb-3 relative border border-white/5">
+                            {/* Jika file gambar asli belum ada, ini berfungsi sebagai placeholder abu-abu */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-gray-700/20 to-gray-900/40 flex items-center justify-center text-[10px] text-gray-500">
+                              3D Preview
+                            </div>
+                            {/* Gambar Thumbnail Asli */}
+                            <img
+                              src={model.thumbnail}
+                              alt={t(model.name)}
+                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }} // Menyembunyikan tag img jika file gambar tidak ditemukan
+                            />
+
+                            {/* Badge Centang Aktif */}
+                            {isSelected && (
+                              <div className="absolute top-2 right-2 bg-primary text-white p-1 rounded-full shadow-md">
+                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Judul Model */}
+                          <span className={`text-xs font-medium px-1 truncate ${isSelected ? "text-primary font-bold" : "text-gray-300 group-hover:text-white"}`}>
+                            {t(model.name)}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid gap-4">
               <div className="bg-surface border border-white/5 rounded-lg pb-5">
@@ -311,7 +445,7 @@ function App() {
                           <input
                             type="checkbox"
                             className="peer sr-only"
-                            checked={reflectorEnabled}
+                            checked={reflectorEnabled && lightEnabled && (keyLightEnabled || fillLightEnabled)}
                             onChange={(e) =>
                               setReflectorEnabled(e.target.checked)
                             }
