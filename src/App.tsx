@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Navbar, Slider } from "./components";
 import { IconCameraFill } from "justd-icons";
 import { useTranslation } from "react-i18next";
 
 import { calcStops } from "./utils/cameraMath";
 import { ExposureMeter } from "./components/ExposureMeter";
-import ThreeScene from "./components/ThreeScene";
+import ThreeScene, { type ThreeSceneHandle } from "./components/ThreeScene";
+import { CaptureModal } from "./components/CaptureModal";
 import SideBySideSliders from "./components/sliders/SideBySideSlider";
 import { Button } from "./components/button/Button";
 import Footer from "./components/footer/Footer";
@@ -43,6 +44,18 @@ function App() {
   const [reflectorDistance, setReflectorDistance] = useState(2.5);
   const [reflectorHeight, setReflectorHeight] = useState(-1.7);
 
+  const threeSceneRef = useRef<ThreeSceneHandle>(null);
+  const [capturedImageUrl, setCapturedImageUrl] = useState<string | null>(null);
+
+  const handleCapture = () => {
+    const dataUrl = threeSceneRef.current?.capture(iso, aperture, 1 / shutter);
+    if (dataUrl) {
+      setCapturedImageUrl(dataUrl);
+    }
+  };
+
+  const handleCloseModal = () => setCapturedImageUrl(null);
+
   const exposureStatus =
     stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
 
@@ -56,9 +69,7 @@ function App() {
           <div className="lg:col-span-8 space-y-4">
             <div className="relative w-full aspect-square md:aspect-[4/3] rounded-sm overflow-hidden border border-white/5 bg-surface">
               <ThreeScene
-                iso={iso}
-                aperture={aperture}
-                shutter={1 / shutter}
+                ref={threeSceneRef}
                 lightEnabled={lightEnabled}
                 selectedModel={selectedModel}
                 keyLightEnabled={keyLightEnabled}
@@ -352,7 +363,7 @@ function App() {
               )}
 
               <div className="mt-8 pt-6 border-t border-white/5">
-                <Button variant="primary">
+                <Button variant="primary" onClick={handleCapture}>
                   <IconCameraFill className="w-5 h-5" />
                   {t("capture")}
                 </Button>
@@ -362,6 +373,8 @@ function App() {
         </div>
         <Footer />
       </main>
+
+      <CaptureModal dataUrl={capturedImageUrl} onClose={handleCloseModal} />
     </div>
   );
 }
