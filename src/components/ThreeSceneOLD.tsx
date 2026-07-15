@@ -80,7 +80,7 @@ function StudioReflector({
   lightRotation,
   fillLightRotation,
   reflectorRotation,
-  reflectorTilt // <-- Tambahkan prop kemiringan baru di sini (dalam derajat)
+  reflectorTilt
 }: {
   position: [number, number, number];
   lightEnabled: boolean;
@@ -89,7 +89,7 @@ function StudioReflector({
   lightRotation: number;
   fillLightRotation: number;
   reflectorRotation: number;
-  reflectorTilt: number; // <-- Daftarkan tipenya
+  reflectorTilt: number;
 }) {
   const reflectorRef = useRef<THREE.Group>(null);
   const lightRef = useRef<THREE.DirectionalLight>(null);

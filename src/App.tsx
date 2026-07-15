@@ -61,11 +61,11 @@ function App() {
     stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
 
   const MODELS_LIST = [
-    { id: "model1_female", name: "models.model1", thumbnail: "/thumbnails/model1_female.jpg" },
-    { id: "model2_male", name: "models.model2", thumbnail: "/thumbnails/model2_male.jpg" },
-    { id: "model3_milkchocolate", name: "models.model3", thumbnail: "/thumbnails/model3.jpg" },
-    { id: "model4_serum", name: "models.model4", thumbnail: "/thumbnails/model4.jpg" },
-    { id: "model5_cosmetic", name: "models.model5", thumbnail: "/thumbnails/model5.jpg" },
+    { id: "model1_female", name: "models.model1", thumbnail: "/models/thumbs/model1_female.jpg" },
+    { id: "model2_male", name: "models.model2", thumbnail: "/models/thumbs/model2_male.jpg" },
+    { id: "model3_milkchocolate", name: "models.model3", thumbnail: "/models/thumbs/model3.png" },
+    { id: "model4_serum", name: "models.model4", thumbnail: "/models/thumbs/model4.png" },
+    { id: "model5_cosmetic", name: "models.model5", thumbnail: "/models/thumbs/model5.png" },
   ] as const;
 
   const [isModelModalOpen, setIsModelModalOpen] = useState(false);
