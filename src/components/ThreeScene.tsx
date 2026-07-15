@@ -1,4 +1,12 @@
-import { Suspense, useEffect, useMemo, useState, useRef } from "react";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+  useCallback,
+} from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
   ContactShadows,
@@ -9,9 +17,6 @@ import {
 import * as THREE from "three";
 
 type ThreeSceneProps = {
-  iso: number;
-  aperture: number;
-  shutter: number;
   lightEnabled: boolean;
   selectedModel: "model1" | "model2" | "model3" | "model4" | "model5";
 
@@ -230,30 +235,46 @@ function CameraManager({
 }
 
 // --- 5. EXPOSURE ---
-function CameraExposure({
-  iso,
-  aperture,
-  shutter,
+export type ThreeSceneHandle = {
+  capture: (iso: number, aperture: number, shutter: number) => string;
+};
+
+function CaptureHelper({
+  onReady,
 }: {
-  iso: number;
-  aperture: number;
-  shutter: number;
+  onReady: (fn: (iso: number, aperture: number, shutter: number) => string) => void;
 }) {
-  const { gl } = useThree();
+  const { gl, scene, camera } = useThree();
+  const readyRef = useRef(false);
+
   useEffect(() => {
-    const ev = Math.log2((aperture * aperture) / shutter);
-    const exposure = iso / 100 / Math.pow(2, ev);
-    gl.toneMapping = THREE.ACESFilmicToneMapping;
-    gl.toneMappingExposure = exposure * 600;
-  }, [gl, iso, aperture, shutter]);
+    if (!readyRef.current) {
+      readyRef.current = true;
+      onReady((iso: number, aperture: number, shutter: number) => {
+        const prevToneMapping = gl.toneMapping;
+        const prevExposure = gl.toneMappingExposure;
+
+        const ev = Math.log2((aperture * aperture) / shutter);
+        const exposure = iso / 100 / Math.pow(2, ev);
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = exposure * 600;
+
+        gl.render(scene, camera);
+        const dataUrl = gl.domElement.toDataURL("image/png");
+
+        gl.toneMapping = prevToneMapping;
+        gl.toneMappingExposure = prevExposure;
+
+        return dataUrl;
+      });
+    }
+  }, [gl, scene, camera, onReady]);
+
   return null;
 }
 
 // --- 6. UTAN SCENE UTAMA ---
-export default function ThreeScene({
-  iso,
-  aperture,
-  shutter,
+const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene({
   lightEnabled,
   selectedModel,
 
@@ -272,7 +293,19 @@ export default function ThreeScene({
   reflectorHeight,
   reflectorDistance,
   reflectorTilt
-}: ThreeSceneProps) {
+}: ThreeSceneProps, ref) {
+  const captureFnRef = useRef<((iso: number, aperture: number, shutter: number) => string) | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    capture: (iso: number, aperture: number, shutter: number) => {
+      return captureFnRef.current?.(iso, aperture, shutter) ?? "";
+    },
+  }), []);
+
+  const handleCaptureReady = useCallback((fn: (iso: number, aperture: number, shutter: number) => string) => {
+    captureFnRef.current = fn;
+  }, []);
+
   const directionalPosition1 = useMemo(() => {
     const rad = THREE.MathUtils.degToRad(lightRotation);
     return [
@@ -301,8 +334,8 @@ export default function ThreeScene({
   }, [reflectorRotation, reflectorDistance, reflectorHeight]);
 
   return (
-    <Canvas shadows camera={{ fov: 5 }}>
-      <CameraExposure iso={iso} aperture={aperture} shutter={shutter} />
+    <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
+      <CaptureHelper onReady={handleCaptureReady} />
       <CameraManager selectedModel={selectedModel} />
 
       <color attach="background" args={["#2b2b2b"]} />
@@ -372,4 +405,6 @@ export default function ThreeScene({
       />
     </Canvas>
   );
-}
+});
+
+export default ThreeSceneWithRef;
