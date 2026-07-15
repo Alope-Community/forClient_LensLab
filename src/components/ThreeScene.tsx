@@ -29,8 +29,135 @@ type ThreeSceneProps = {
   reflectorRotation: number;
   reflectorHeight: number;
   reflectorDistance: number;
+  reflectorTilt: number;
 };
 
+// --- 1. KOMPONEN BARU: MODEL LAMPU STUDIO FISIK (PENGGANTI LIGHTMARKER BULAT) ---
+function StudioLightFixture({
+  position,
+  color = "#ffffff",
+}: {
+  position: [number, number, number];
+  color?: string;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    if (groupRef.current) {
+      // Membuat moncong studio light selalu menyorot lurus ke arah model utama
+      groupRef.current.lookAt(0, -2, 0);
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={position}>
+      {/* Kap / Rumah Lampu Studio (Silinder Kerucut) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.2, 0.3, 0.5, 16]} />
+        <meshStandardMaterial color="#1a1a1a" roughness={0.6} metalness={0.2} />
+      </mesh>
+
+      {/* Bagian Belakang / Engsel Lampu */}
+      <mesh position={[0, 0, -0.28]}>
+        <sphereGeometry args={[0.12, 16, 16]} />
+        <meshStandardMaterial color="#333333" />
+      </mesh>
+
+      {/* Kaca Bohlam Depan yang Memancarkan Cahaya Emissive */}
+      <mesh position={[0, 0, 0.251]} rotation={[0, 0, 0]}>
+        <ringGeometry args={[0, 0.19, 32]} />
+        <meshBasicMaterial color={color} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+// --- 2. PAPAN REFLEKTOR FISIK ---
+function StudioReflector({
+  position,
+  lightEnabled,
+  keyLightEnabled,
+  fillLightEnabled,
+  lightRotation,
+  fillLightRotation,
+  reflectorRotation,
+  reflectorTilt // <-- Tambahkan prop kemiringan baru di sini (dalam derajat)
+}: {
+  position: [number, number, number];
+  lightEnabled: boolean;
+  keyLightEnabled: boolean;
+  fillLightEnabled: boolean;
+  lightRotation: number;
+  fillLightRotation: number;
+  reflectorRotation: number;
+  reflectorTilt: number; // <-- Daftarkan tipenya
+}) {
+  const reflectorRef = useRef<THREE.Group>(null);
+  const lightRef = useRef<THREE.DirectionalLight>(null);
+  const lightTargetRef = useRef<THREE.Object3D>(null);
+
+  useFrame(() => {
+    if (reflectorRef.current) {
+      // Sumbu Y mengontrol arah hadap melingkar mengikuti posisinya di studio
+      // Kita tambah Math.PI (180 derajat) agar bagian depan papan menghadap ke tengah subjek
+      reflectorRef.current.rotation.y = THREE.MathUtils.degToRad(reflectorRotation) + Math.PI;
+
+      // Sumbu X mengontrol kemiringan atas / bawah (Tilt) secara manual sesuai input slider
+      reflectorRef.current.rotation.x = THREE.MathUtils.degToRad(reflectorTilt);
+    }
+
+    // Hitung intensitas pantulan real-time
+    if (lightRef.current && lightTargetRef.current) {
+      if (!lightEnabled) {
+        lightRef.current.intensity = 0;
+        return;
+      }
+
+      let totalBounce = 0;
+
+      const diffKey = Math.abs((lightRotation % 360) - (reflectorRotation % 360));
+      const angleDiffKey = diffKey > 180 ? 360 - diffKey : diffKey;
+
+      if (keyLightEnabled && angleDiffKey >= 90) {
+        const factor = (angleDiffKey - 90) / 90;
+        totalBounce += (10 * 0.20) * factor;
+      }
+
+      const diffFill = Math.abs((fillLightRotation % 360) - (reflectorRotation % 360));
+      const angleDiffFill = diffFill > 180 ? 360 - diffFill : diffFill;
+
+      if (fillLightEnabled && angleDiffFill >= 90) {
+        const factor = (angleDiffFill - 90) / 90;
+        totalBounce += (4 * 0.20) * factor;
+      }
+
+      lightRef.current.intensity = totalBounce;
+      lightRef.current.target = lightTargetRef.current;
+    }
+  });
+
+  return (
+    <group ref={reflectorRef} position={position}>
+      {/* VISUAL PAPAN */}
+      <mesh>
+        <planeGeometry args={[0.6, 1.0]} />
+        <meshStandardMaterial color="#ffffff" side={THREE.DoubleSide} roughness={0.1} />
+      </mesh>
+
+      {/* TARGET JANGKAR CAHAYA (Ikut miring mengikuti rotasi lokal group papan) */}
+      <object3D ref={lightTargetRef} position={[0, 0, 5]} />
+
+      {/* CAHAYA PANTULAN SIMULASI */}
+      <directionalLight
+        ref={lightRef}
+        position={[0, 0, 0.1]}
+        intensity={0}
+      />
+    </group>
+  );
+}
+
+// --- 3. MODEL LOADERS ---
 function Mannequin() {
   const { scene } = useGLTF("/models/mannequin.glb");
   useEffect(() => {
@@ -74,7 +201,7 @@ useGLTF.preload("/models/mannequin.glb");
 useGLTF.preload("/models/cosmetics__skin_care_product.glb");
 useGLTF.preload("/models/female.glb");
 
-
+// --- 4. CAMERA MANAGER ---
 function CameraManager({
   selectedModel,
 }: {
@@ -87,71 +214,22 @@ function CameraManager({
       camera.position.set(0.0, -2.0, 30);
       camera.lookAt(0, -2, 0);
       if (controls) (controls as any).target.set(0, -2, 0);
-
     } else if (selectedModel === "model3") {
       camera.position.set(-0.03, 0.27, 21.14);
       camera.lookAt(-0.00, -0.94, -0.40);
       if (controls) (controls as any).target.set(-0.00, -0.94, -0.40);
-
     } else {
       camera.position.set(-5.18, 1.87, 1.52);
       camera.lookAt(-0.25, -1.78, 0.08);
       if (controls) (controls as any).target.set(-0.25, -1.78, 0.08);
     }
-
     camera.updateProjectionMatrix();
   }, [selectedModel, camera, controls]);
-
-  useFrame(() => {
-    if (selectedModel === "model3" && controls) {
-      const p = camera.position;
-      const t = (controls as any).target;
-      console.log(
-        `Posisi Kamera: [${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}] | Target: [${t.x.toFixed(2)}, ${t.y.toFixed(2)}, ${t.z.toFixed(2)}]`,
-      );
-    }
-  });
 
   return null;
 }
 
-function LightMarker({
-  position,
-  color = "#ff0000",
-  radius = 0.08,
-}: {
-  position: [number, number, number];
-  color?: string;
-  radius?: number;
-}) {
-  const [isVisible, setIsVisible] = useState(false);
-  const isFirstRender = useRef(true);
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    setIsVisible(true);
-
-    const timeout = setTimeout(() => {
-      setIsVisible(false);
-    }, 1000);
-
-    return () => clearTimeout(timeout);
-  }, [position]);
-
-  if (!isVisible) return null;
-
-  return (
-    <mesh position={position}>
-      <sphereGeometry args={[radius, 32, 32]} />
-      <meshBasicMaterial color={color} toneMapped={false} />
-    </mesh>
-  );
-}
-
+// --- 5. EXPOSURE ---
 function CameraExposure({
   iso,
   aperture,
@@ -171,6 +249,7 @@ function CameraExposure({
   return null;
 }
 
+// --- 6. UTAN SCENE UTAMA ---
 export default function ThreeScene({
   iso,
   aperture,
@@ -192,6 +271,7 @@ export default function ThreeScene({
   reflectorRotation,
   reflectorHeight,
   reflectorDistance,
+  reflectorTilt
 }: ThreeSceneProps) {
   const directionalPosition1 = useMemo(() => {
     const rad = THREE.MathUtils.degToRad(lightRotation);
@@ -223,13 +303,12 @@ export default function ThreeScene({
   return (
     <Canvas shadows camera={{ fov: 5 }}>
       <CameraExposure iso={iso} aperture={aperture} shutter={shutter} />
-
       <CameraManager selectedModel={selectedModel} />
 
       <color attach="background" args={["#2b2b2b"]} />
       <ambientLight intensity={lightEnabled ? 0.25 : 0} />
 
-      {/* LIGHTS */}
+      {/* REAL LIGHTS */}
       <directionalLight
         position={directionalPosition1}
         intensity={lightEnabled && keyLightEnabled ? 10 : 0}
@@ -242,30 +321,33 @@ export default function ThreeScene({
         castShadow
         shadow-mapSize={[1024, 1024]}
       />
-      <pointLight
-        position={pointLightPosition}
-        intensity={lightEnabled && reflectorEnabled ? 4 : 0}
-        distance={20}
-        decay={2}
-      />
 
-      {/* LIGHT MARKERS */}
+      {/* VISUAL HARDWARE LIGHT FIXTURES (Menggantikan bulatan LightMarker) */}
       {lightEnabled && keyLightEnabled && (
-        <LightMarker
+        <StudioLightFixture
           position={directionalPosition1}
-          color="#FFD700"
-          radius={0.12}
+          color="#FFD700" // Kuning Emas untuk Key Light
         />
       )}
       {lightEnabled && fillLightEnabled && (
-        <LightMarker
+        <StudioLightFixture
           position={directionalPosition2}
-          color="#FF8C00"
-          radius={0.12}
+          color="#FF8C00" // Oranye Gelap untuk Fill Light
         />
       )}
+
+      {/* PAPAN REFLEKTOR DAN ALAT PANTUL */}
       {lightEnabled && reflectorEnabled && (
-        <LightMarker position={pointLightPosition} color="#00BFFF" />
+        <StudioReflector
+          position={pointLightPosition}
+          lightEnabled={lightEnabled}
+          keyLightEnabled={keyLightEnabled}
+          fillLightEnabled={fillLightEnabled}
+          lightRotation={lightRotation}
+          fillLightRotation={fillLightRotation}
+          reflectorRotation={reflectorRotation}
+          reflectorTilt={reflectorTilt} // <-- Salurkan variabelnya ke sini
+        />
       )}
 
       <Environment preset="studio" />
@@ -283,7 +365,6 @@ export default function ThreeScene({
       />
 
       <OrbitControls
-        enableZoom={false}
         enableRotate={false}
         enablePan={false}
         enableDamping

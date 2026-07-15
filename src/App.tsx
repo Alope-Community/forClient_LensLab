@@ -42,6 +42,7 @@ function App() {
   const [reflectorRotation, setReflectorRotation] = useState(120);
   const [reflectorDistance, setReflectorDistance] = useState(2.5);
   const [reflectorHeight, setReflectorHeight] = useState(-1.7);
+  const [reflectorTilt, setReflectorTilt] = useState<number>(0);
 
   const exposureStatus =
     stops > 2 ? "Underexposed" : stops < -2 ? "Overexposed" : "Balanced";
@@ -88,6 +89,7 @@ function App() {
                 reflectorRotation={reflectorRotation}
                 reflectorHeight={reflectorHeight}
                 reflectorDistance={reflectorDistance}
+                reflectorTilt={reflectorTilt}
               />
             </div>
 
@@ -454,6 +456,8 @@ function App() {
                           <div className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-all peer-checked:translate-x-4"></div>
                         </label>
                       </div>
+
+                      {/* Slider Rotasi Horisontal (Mengitari Objek) */}
                       <Slider
                         label={t("rotation")}
                         value={`${reflectorRotation.toFixed(0)}°`}
@@ -464,10 +468,24 @@ function App() {
                         leftLabel="Left"
                         rightLabel="Right"
                       />
+
+                      {/* TAMBAHKAN SLIDER KEMIRINGAN (TILT) DI SINI */}
+                      <Slider
+                        label="Tilt (Kemiringan)"
+                        value={`${reflectorTilt.toFixed(0)}°`}
+                        min={-45} // Menunduk ke bawah maksimal 45 derajat
+                        max={45}  // Mendongak ke atas maksimal 45 derajat
+                        current={reflectorTilt}
+                        onChange={setReflectorTilt}
+                        leftLabel="Down"
+                        rightLabel="Up"
+                      />
+
+                      {/* Slider Tinggi dan Jarak */}
                       <SideBySideSliders
                         label1={t("height")}
                         val1={`${reflectorHeight.toFixed(1)}m`}
-                        min1={-2}
+                        min1={-5}
                         max1={2}
                         cur1={reflectorHeight}
                         chg1={setReflectorHeight}
