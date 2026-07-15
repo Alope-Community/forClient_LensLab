@@ -5,7 +5,7 @@ import { initReactI18next } from "react-i18next";
 const resources = {
     en: {
         translation: {
-            productSubject: "Product Subject",
+            productSubject: "Product Objek",
             selectModelScene: "Select Model Scene",
             cameraExposure: "Camera & Exposure",
             studioLighting: "Studio Lighting",
@@ -19,15 +19,17 @@ const resources = {
             distance: "Distance",
             capture: "Capture Simulation",
             models: {
-                model1: "Mannequin",
-                model2: "Cosmetic Product",
-                model3: "Female Model"
+                model1: "Woman",
+                model2: "Male",
+                model3: "Milk Chocolate",
+                model4: "Serum",
+                model5: "Cosmetic"
             }
         }
     },
     id: {
         translation: {
-            productSubject: "Subjek Produk",
+            productSubject: "Objek Produk",
             selectModelScene: "Pilih Model Scene",
             cameraExposure: "Kamera & Eksposur",
             studioLighting: "Pencahayaan Studio",
@@ -41,9 +43,11 @@ const resources = {
             distance: "Jarak",
             capture: "Ambil Simulasi",
             models: {
-                model1: "Manekin",
-                model2: "Produk Kosmetik",
-                model3: "Model Perempuan"
+                model1: "Wanita",
+                model2: "Pria",
+                model3: "Susu Cokelat",
+                model4: "Serum",
+                model5: "Kosmetik"
             }
         }
     }

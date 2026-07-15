@@ -18,7 +18,7 @@ import * as THREE from "three";
 
 type ThreeSceneProps = {
   lightEnabled: boolean;
-  selectedModel: "model1" | "model2" | "model3" | "model4" | "model5";
+  selectedModel: "model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic";
 
   keyLightEnabled: boolean;
   lightRotation: number;
@@ -37,7 +37,6 @@ type ThreeSceneProps = {
   reflectorTilt: number;
 };
 
-// --- 1. KOMPONEN BARU: MODEL LAMPU STUDIO FISIK (PENGGANTI LIGHTMARKER BULAT) ---
 function StudioLightFixture({
   position,
   color = "#ffffff",
@@ -49,26 +48,22 @@ function StudioLightFixture({
 
   useFrame(() => {
     if (groupRef.current) {
-      // Membuat moncong studio light selalu menyorot lurus ke arah model utama
       groupRef.current.lookAt(0, -2, 0);
     }
   });
 
   return (
     <group ref={groupRef} position={position}>
-      {/* Kap / Rumah Lampu Studio (Silinder Kerucut) */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.2, 0.3, 0.5, 16]} />
         <meshStandardMaterial color="#1a1a1a" roughness={0.6} metalness={0.2} />
       </mesh>
 
-      {/* Bagian Belakang / Engsel Lampu */}
       <mesh position={[0, 0, -0.28]}>
         <sphereGeometry args={[0.12, 16, 16]} />
         <meshStandardMaterial color="#333333" />
       </mesh>
 
-      {/* Kaca Bohlam Depan yang Memancarkan Cahaya Emissive */}
       <mesh position={[0, 0, 0.251]} rotation={[0, 0, 0]}>
         <ringGeometry args={[0, 0.19, 32]} />
         <meshBasicMaterial color={color} side={THREE.DoubleSide} toneMapped={false} />
@@ -77,7 +72,6 @@ function StudioLightFixture({
   );
 }
 
-// --- 2. PAPAN REFLEKTOR FISIK ---
 function StudioReflector({
   position,
   lightEnabled,
@@ -103,15 +97,10 @@ function StudioReflector({
 
   useFrame(() => {
     if (reflectorRef.current) {
-      // Sumbu Y mengontrol arah hadap melingkar mengikuti posisinya di studio
-      // Kita tambah Math.PI (180 derajat) agar bagian depan papan menghadap ke tengah subjek
       reflectorRef.current.rotation.y = THREE.MathUtils.degToRad(reflectorRotation) + Math.PI;
-
-      // Sumbu X mengontrol kemiringan atas / bawah (Tilt) secara manual sesuai input slider
       reflectorRef.current.rotation.x = THREE.MathUtils.degToRad(reflectorTilt);
     }
 
-    // Hitung intensitas pantulan real-time
     if (lightRef.current && lightTargetRef.current) {
       if (!lightEnabled) {
         lightRef.current.intensity = 0;
@@ -143,16 +132,13 @@ function StudioReflector({
 
   return (
     <group ref={reflectorRef} position={position}>
-      {/* VISUAL PAPAN */}
       <mesh>
         <planeGeometry args={[0.6, 1.0]} />
         <meshStandardMaterial color="#ffffff" side={THREE.DoubleSide} roughness={0.1} />
       </mesh>
 
-      {/* TARGET JANGKAR CAHAYA (Ikut miring mengikuti rotasi lokal group papan) */}
       <object3D ref={lightTargetRef} position={[0, 0, 5]} />
 
-      {/* CAHAYA PANTULAN SIMULASI */}
       <directionalLight
         ref={lightRef}
         position={[0, 0, 0.1]}
@@ -162,9 +148,8 @@ function StudioReflector({
   );
 }
 
-// --- 3. MODEL LOADERS ---
-function Mannequin() {
-  const { scene } = useGLTF("/models/mannequin.glb");
+function Model1Female() {
+  const { scene } = useGLTF("/models/model1_female.glb");
   useEffect(() => {
     scene.traverse((child: any) => {
       if (child.isMesh) {
@@ -176,8 +161,8 @@ function Mannequin() {
   return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
 }
 
-function SecondModel() {
-  const { scene } = useGLTF("/models/cosmetics__skin_care_product.glb");
+function Model2Male() {
+  const { scene } = useGLTF("/models/model2_male.glb");
   useEffect(() => {
     scene.traverse((child: any) => {
       if (child.isMesh) {
@@ -189,8 +174,8 @@ function SecondModel() {
   return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
 }
 
-function ThirdModel() {
-  const { scene } = useGLTF("/models/female.glb");
+function Model3MilkChocolate() {
+  const { scene } = useGLTF("/models/model3_milkchocolate.glb");
   useEffect(() => {
     scene.traverse((child: any) => {
       if (child.isMesh) {
@@ -202,27 +187,68 @@ function ThirdModel() {
   return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
 }
 
-useGLTF.preload("/models/mannequin.glb");
-useGLTF.preload("/models/cosmetics__skin_care_product.glb");
-useGLTF.preload("/models/female.glb");
+function Model4Serum() {
+  const { scene } = useGLTF("/models/model4_serum.glb");
+  useEffect(() => {
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+  return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
+}
 
-// --- 4. CAMERA MANAGER ---
+
+function Model5Cosmetic() {
+  const { scene } = useGLTF("/models/model5_cosmetic.glb");
+  useEffect(() => {
+    scene.traverse((child: any) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [scene]);
+  return <primitive object={scene} scale={2} position={[0, -2, 0]} />;
+}
+
+
+useGLTF.preload("/models/model1_female.glb");
+useGLTF.preload("/models/model2_male.glb");
+useGLTF.preload("/models/model3_milkchocolate.glb");
+useGLTF.preload("/models/model4_serum.glb");
+useGLTF.preload("/models/model5_cosmetic.glb");
+
 function CameraManager({
   selectedModel,
 }: {
-  selectedModel: "model1" | "model2" | "model3" | "model4" | "model5";
+  selectedModel: "model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic";
 }) {
   const { camera, controls } = useThree();
 
   useEffect(() => {
-    if (selectedModel === "model1") {
-      camera.position.set(0.0, -2.0, 30);
-      camera.lookAt(0, -2, 0);
-      if (controls) (controls as any).target.set(0, -2, 0);
-    } else if (selectedModel === "model3") {
+    if (selectedModel === "model1_female") {
       camera.position.set(-0.03, 0.27, 21.14);
       camera.lookAt(-0.00, -0.94, -0.40);
       if (controls) (controls as any).target.set(-0.00, -0.94, -0.40);
+    } else if (selectedModel === "model2_male") {
+      camera.position.set(0.01, 2.05, 21.04);
+      camera.lookAt(0.04, 0.84, -0.50);
+      if (controls) (controls as any).target.set(0.04, 0.84, -0.50);
+    } else if (selectedModel === "model3_milkchocolate") {
+      camera.position.set(67.02, 15.86, -26.38);
+      camera.lookAt(1.05, -3.53, 0.65);
+      if (controls) (controls as any).target.set(1.05, -3.53, 0.65);
+    } else if (selectedModel === "model4_serum") {
+      camera.position.set(40.03, 67.39, 104.30);
+      camera.lookAt(-0.44, 1.46, -0.09);
+      if (controls) (controls as any).target.set(-0.44, 1.46, -0.09);
+    } else if (selectedModel === "model5_cosmetic") {
+      camera.position.set(17.97, 22.34, 34.11);
+      camera.lookAt(1.90, -1.55, 0.51);
+      if (controls) (controls as any).target.set(1.90, -1.55, 0.51);
     } else {
       camera.position.set(-5.18, 1.87, 1.52);
       camera.lookAt(-0.25, -1.78, 0.08);
@@ -234,7 +260,6 @@ function CameraManager({
   return null;
 }
 
-// --- 5. EXPOSURE ---
 export type ThreeSceneHandle = {
   capture: (iso: number, aperture: number, shutter: number) => string;
 };
@@ -273,7 +298,6 @@ function CaptureHelper({
   return null;
 }
 
-// --- 6. UTAN SCENE UTAMA ---
 const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene({
   lightEnabled,
   selectedModel,
@@ -341,7 +365,6 @@ const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function
       <color attach="background" args={["#2b2b2b"]} />
       <ambientLight intensity={lightEnabled ? 0.25 : 0} />
 
-      {/* REAL LIGHTS */}
       <directionalLight
         position={directionalPosition1}
         intensity={lightEnabled && keyLightEnabled ? 10 : 0}
@@ -355,21 +378,19 @@ const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function
         shadow-mapSize={[1024, 1024]}
       />
 
-      {/* VISUAL HARDWARE LIGHT FIXTURES (Menggantikan bulatan LightMarker) */}
       {lightEnabled && keyLightEnabled && (
         <StudioLightFixture
           position={directionalPosition1}
-          color="#FFD700" // Kuning Emas untuk Key Light
+          color="#FFD700"
         />
       )}
       {lightEnabled && fillLightEnabled && (
         <StudioLightFixture
           position={directionalPosition2}
-          color="#FF8C00" // Oranye Gelap untuk Fill Light
+          color="#FF8C00"
         />
       )}
 
-      {/* PAPAN REFLEKTOR DAN ALAT PANTUL */}
       {lightEnabled && reflectorEnabled && (
         <StudioReflector
           position={pointLightPosition}
@@ -379,14 +400,14 @@ const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function
           lightRotation={lightRotation}
           fillLightRotation={fillLightRotation}
           reflectorRotation={reflectorRotation}
-          reflectorTilt={reflectorTilt} // <-- Salurkan variabelnya ke sini
+          reflectorTilt={reflectorTilt}
         />
       )}
 
       <Environment preset="studio" />
 
       <Suspense fallback={null}>
-        {selectedModel === "model1" ? <Mannequin /> : selectedModel === "model2" ? <SecondModel /> : <ThirdModel />}
+        {selectedModel === "model1_female" ? <Model1Female /> : selectedModel === "model2_male" ? <Model2Male /> : selectedModel === "model3_milkchocolate" ? <Model3MilkChocolate /> : selectedModel === "model4_serum" ? <Model4Serum /> : selectedModel === "model5_cosmetic" ? <Model5Cosmetic /> : null}
       </Suspense>
 
       <ContactShadows
@@ -398,10 +419,18 @@ const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function
       />
 
       <OrbitControls
-        enableRotate={false}
-        enablePan={false}
         enableDamping
         makeDefault
+        onChange={(event) => {
+          const controls = event?.target;
+          if (controls) {
+            const p = controls.object.position;
+            const t = controls.target;
+            console.log(
+              `Camera Position: [${p.x.toFixed(2)}, ${p.y.toFixed(2)}, ${p.z.toFixed(2)}] | Orbit Target: [${t.x.toFixed(2)}, ${t.y.toFixed(2)}, ${t.z.toFixed(2)}]`
+            );
+          }
+        }}
       />
     </Canvas>
   );

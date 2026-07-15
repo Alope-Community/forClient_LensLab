@@ -18,8 +18,8 @@ function App() {
   const [shutter, setShutter] = useState(250);
   const [iso, setIso] = useState(100);
 
-  const [selectedModel, setSelectedModel] = useState<"model1" | "model2" | "model3" | "model4" | "model5">(
-    "model1",
+  const [selectedModel, setSelectedModel] = useState<"model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic">(
+    "model1_female",
   );
   const [activeTab, setActiveTab] = useState<"camera" | "lighting">("camera");
 
@@ -62,11 +62,11 @@ function App() {
 
 
   const MODELS_LIST = [
-    { id: "model1", name: "models.model1", thumbnail: "/thumbnails/mannequin.jpg" },
-    { id: "model2", name: "models.model2", thumbnail: "/thumbnails/cosmetics.jpg" },
-    { id: "model3", name: "models.model3", thumbnail: "/thumbnails/snack.jpg" },
-    { id: "model4", name: "models.model4", thumbnail: "/thumbnails/beverage.jpg" }, // Contoh objek ke-4
-    { id: "model5", name: "models.model5", thumbnail: "/thumbnails/electronics.jpg" }, // Contoh objek ke-5
+    { id: "model1_female", name: "models.model1", thumbnail: "/thumbnails/model1_female.jpg" },
+    { id: "model2_male", name: "models.model2", thumbnail: "/thumbnails/model2_male.jpg" },
+    { id: "model3_milkchocolate", name: "models.model3", thumbnail: "/thumbnails/model3.jpg" },
+    { id: "model4_serum", name: "models.model4", thumbnail: "/thumbnails/model4.jpg" },
+    { id: "model5_cosmetic", name: "models.model5", thumbnail: "/thumbnails/model5.jpg" },
   ] as const;
 
   // Di dalam komponen utama Anda:
@@ -104,49 +104,6 @@ function App() {
               />
             </div>
 
-            {/* SELEKSI MODEL */}
-            {/* <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex flex-col">
-                <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/50 uppercase">
-                  {t("productSubject")}
-                </span>
-                <span className="text-sm font-medium text-white/90">
-                  {t("selectModelScene")}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 p-1 bg-neutral rounded-lg border border-white/5 min-w-[280px]">
-                <Button
-                  type="button"
-                  variant="tab"
-                  className="py-2"
-                  isActive={selectedModel === "model1"}
-                  onClick={() => setSelectedModel("model1")}
-                >
-                  {t("models.model1")}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="tab"
-                  className="py-2"
-                  isActive={selectedModel === "model2"}
-                  onClick={() => setSelectedModel("model2")}
-                >
-                  {t("models.model2")}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="tab"
-                  className="py-2"
-                  isActive={selectedModel === "model3"}
-                  onClick={() => setSelectedModel("model3")}
-                >
-                  {t("models.model3")}
-                </Button>
-              </div>
-            </div> */}
-            {/* SELEKSI MODEL */}
             <div className="bg-surface border border-white/5 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex flex-col">
                 <span className="font-grotesk text-[11px] font-bold tracking-widest text-white/50 uppercase">
