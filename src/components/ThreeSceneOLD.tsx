@@ -298,7 +298,7 @@ function CaptureHelper({
   return null;
 }
 
-const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene({
+const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeSceneOLD({
   lightEnabled,
   selectedModel,
 
