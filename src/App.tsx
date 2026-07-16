@@ -18,7 +18,7 @@ function App() {
   const { t } = useTranslation();
 
   const [aperture, setAperture] = useState(5.6);
-  const [shutter, setShutter] = useState(250);
+  const [shutter, setShutter] = useState(140);
   const [iso, setIso] = useState(100);
 
   const [selectedModel, setSelectedModel] = useState<"model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic">(

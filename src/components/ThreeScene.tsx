@@ -16,6 +16,10 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 
+const INITIAL_ISO = 100;
+const INITIAL_APERTURE = 5.6;
+const INITIAL_SHUTTER = 1 / 140;
+
 type ThreeSceneProps = {
   lightEnabled: boolean;
   selectedModel: "model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic";
@@ -260,6 +264,17 @@ function CameraManager({
   return null;
 }
 
+function CameraExposure() {
+  const { gl } = useThree();
+  useEffect(() => {
+    const ev = Math.log2((INITIAL_APERTURE * INITIAL_APERTURE) / INITIAL_SHUTTER);
+    const exposure = INITIAL_ISO / 100 / Math.pow(2, ev);
+    gl.toneMapping = THREE.ACESFilmicToneMapping;
+    gl.toneMappingExposure = exposure * 600;
+  }, [gl]);
+  return null;
+}
+
 export type ThreeSceneHandle = {
   capture: (iso: number, aperture: number, shutter: number) => string;
 };
@@ -359,6 +374,7 @@ const ThreeSceneWithRef = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function
 
   return (
     <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
+      <CameraExposure />
       <CaptureHelper onReady={handleCaptureReady} />
       <CameraManager selectedModel={selectedModel} />
 
