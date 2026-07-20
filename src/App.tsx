@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { calcStops } from "./utils/cameraMath";
 import { ExposureMeter } from "./components/ExposureMeter";
-import ThreeScene, { type ThreeSceneHandle } from "./components/ThreeScene";
+import ThreeScene, { type ThreeSceneHandle } from "./components/ThreeScene/index";
 import { CaptureModal } from "./components/CaptureModal";
 import SideBySideSliders from "./components/sliders/SideBySideSlider";
 import { Button } from "./components/button/Button";
@@ -42,7 +42,7 @@ function App() {
   const [reflectorEnabled, setReflectorEnabled] = useState(true);
   const [reflectorRotation, setReflectorRotation] = useState(120);
   const [reflectorDistance, setReflectorDistance] = useState(2.5);
-  const [reflectorHeight, setReflectorHeight] = useState(-1.7);
+  const [reflectorHeight, setReflectorHeight] = useState(-1.7); ``
   const [reflectorTilt, setReflectorTilt] = useState<number>(0);
 
   const threeSceneRef = useRef<ThreeSceneHandle>(null);
