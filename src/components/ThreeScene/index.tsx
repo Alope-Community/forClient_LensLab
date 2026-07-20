@@ -17,6 +17,8 @@ import {
 } from "./Models";
 
 type ThreeSceneProps = {
+
+
     lightEnabled: boolean;
     selectedModel: "model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic";
 
@@ -46,7 +48,7 @@ export type ThreeSceneHandle = {
     capture: (iso: number, aperture: number, shutter: number) => string;
 };
 
-const LIVE_MULT = 3600;
+const LIVE_MULT = 600;
 
 function LiveExposure({ aperture, shutter, iso, compensation }: { aperture: number; shutter: number; iso: number; compensation: number }) {
     const { gl } = useThree();
@@ -61,6 +63,7 @@ function LiveExposure({ aperture, shutter, iso, compensation }: { aperture: numb
 
 const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene(
     {
+
         lightEnabled,
         selectedModel,
         keyLightEnabled,
@@ -128,7 +131,14 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
     return (
         <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
             <LiveExposure aperture={aperture} shutter={shutter} iso={iso} compensation={exposureComp} />
-            <CaptureHelper onReady={handleCaptureReady} exposureComp={exposureComp} liveMult={LIVE_MULT} />
+            <CaptureHelper
+                onReady={handleCaptureReady}
+                exposureComp={exposureComp}
+                liveMult={LIVE_MULT}
+                iso={iso}
+                aperture={aperture}
+                shutter={shutter}
+            />
             <CameraManager selectedModel={selectedModel} />
 
             <color attach="background" args={["#2b2b2b"]} />
@@ -192,6 +202,9 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
             <OrbitControls
                 enableDamping
                 makeDefault
+                enableRotate={false}
+                enableZoom={false}
+                enablePan={false}
                 onChange={(event) => {
                     const controls = event?.target;
                     if (controls) {
