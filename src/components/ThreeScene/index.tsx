@@ -1,5 +1,5 @@
-import { Suspense, useMemo, useRef, forwardRef, useImperativeHandle, useCallback } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Suspense, useMemo, useRef, forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
+import { Canvas, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -35,11 +35,29 @@ type ThreeSceneProps = {
     reflectorHeight: number;
     reflectorDistance: number;
     reflectorTilt: number;
+
+    aperture: number;
+    shutter: number;
+    iso: number;
+    exposureComp: number;
 };
 
 export type ThreeSceneHandle = {
     capture: (iso: number, aperture: number, shutter: number) => string;
 };
+
+const LIVE_MULT = 3600;
+
+function LiveExposure({ aperture, shutter, iso, compensation }: { aperture: number; shutter: number; iso: number; compensation: number }) {
+    const { gl } = useThree();
+    useEffect(() => {
+        const ev = Math.log2((aperture * aperture) / shutter);
+        const exposure = iso / 100 / Math.pow(2, ev - compensation);
+        gl.toneMapping = THREE.ACESFilmicToneMapping;
+        gl.toneMappingExposure = exposure * LIVE_MULT;
+    }, [aperture, shutter, iso, compensation, gl]);
+    return null;
+}
 
 const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene(
     {
@@ -58,6 +76,10 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
         reflectorHeight,
         reflectorDistance,
         reflectorTilt,
+        aperture = 5.6,
+        shutter = 0.004,
+        iso = 100,
+        exposureComp = 0.1,
     }: ThreeSceneProps,
     ref
 ) {
@@ -105,7 +127,8 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
 
     return (
         <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
-            <CaptureHelper onReady={handleCaptureReady} />
+            <LiveExposure aperture={aperture} shutter={shutter} iso={iso} compensation={exposureComp} />
+            <CaptureHelper onReady={handleCaptureReady} exposureComp={exposureComp} liveMult={LIVE_MULT} />
             <CameraManager selectedModel={selectedModel} />
 
             <color attach="background" args={["#2b2b2b"]} />

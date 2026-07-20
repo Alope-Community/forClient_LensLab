@@ -18,8 +18,8 @@ function App() {
   const { t } = useTranslation();
 
   const [aperture, setAperture] = useState(5.6);
-  const [shutter, setShutter] = useState(140);
-  const [iso, setIso] = useState(100);
+  const [shutter, setShutter] = useState(250);
+  const [iso, setIso] = useState(180);
 
   const [selectedModel, setSelectedModel] = useState<"model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic">(
     "model1_female",
@@ -96,6 +96,10 @@ function App() {
                 reflectorHeight={reflectorHeight}
                 reflectorDistance={reflectorDistance}
                 reflectorTilt={reflectorTilt}
+                aperture={aperture}
+                shutter={1 / shutter}
+                iso={iso}
+                exposureComp={0.1}
               />
             </div>
 
