@@ -15,6 +15,7 @@ import {
     Model4Serum,
     Model5Cosmetic,
 } from "./Models";
+import { DynamicCameraZoom } from "./DynamicCameraZoom";
 
 type ThreeSceneProps = {
 
@@ -130,6 +131,22 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
 
     return (
         <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
+            {selectedModel === "model1_female" && (
+                <DynamicCameraZoom
+                    lightRotation={lightRotation}
+                    lightHeight={lightHeight}
+                    lightDistance={lightDistance}
+                    fillLightRotation={fillLightRotation}
+                    fillLightHeight={fillLightHeight}
+                    fillLightDistance={fillLightDistance}
+                    reflectorRotation={reflectorRotation}
+                    reflectorHeight={reflectorHeight}
+                    reflectorDistance={reflectorDistance}
+                    defaultCameraPos={[0, -2, 30]}
+                    zoomOutCameraPos={[0, -2, 80]}
+                />
+            )}
+
             <LiveExposure aperture={aperture} shutter={shutter} iso={iso} compensation={exposureComp} />
             <CaptureHelper
                 onReady={handleCaptureReady}
@@ -203,7 +220,7 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
                 enableDamping
                 makeDefault
                 enableRotate={false}
-                enableZoom={false}
+                enableZoom={true}
                 enablePan={false}
                 onChange={(event) => {
                     const controls = event?.target;

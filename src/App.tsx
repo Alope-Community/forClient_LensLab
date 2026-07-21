@@ -342,7 +342,7 @@ function App() {
                         rightLabel="Right"
                       />
 
-                      <Slider
+                      {/* <Slider
                         label="Tilt (Kemiringan)"
                         value={`${reflectorTilt.toFixed(0)}°`}
                         min={-45}
@@ -351,7 +351,7 @@ function App() {
                         onChange={setReflectorTilt}
                         leftLabel="Down"
                         rightLabel="Up"
-                      />
+                      /> */}
 
                       <SideBySideSliders
                         label1={t("height")}
