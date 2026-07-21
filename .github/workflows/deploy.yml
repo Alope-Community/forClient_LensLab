@@ -31,7 +31,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist/*" 
-          target: "/var/www/html"
+          target: "/var/www/ForClient/LensLab"
           strip_components: 1
 
       - name: Restart Nginx
