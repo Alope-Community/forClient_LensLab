@@ -43,7 +43,7 @@ function App() {
   const [reflectorRotation, setReflectorRotation] = useState(120);
   const [reflectorDistance, setReflectorDistance] = useState(2.5);
   const [reflectorHeight, setReflectorHeight] = useState(-1.7); ``
-  const [reflectorTilt, setReflectorTilt] = useState<number>(0);
+  const [reflectorTilt, _] = useState<number>(0);
 
   const threeSceneRef = useRef<ThreeSceneHandle>(null);
   const [capturedImageUrl, setCapturedImageUrl] = useState<string | null>(null);

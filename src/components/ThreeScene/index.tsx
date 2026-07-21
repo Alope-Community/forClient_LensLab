@@ -65,9 +65,9 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
         reflectorHeight,
         reflectorDistance,
         reflectorTilt,
-        aperture = 5.6,
-        shutter = 0.004,
-        iso = 100,
+        // aperture = 5.6,
+        // shutter = 0.004,
+        // iso = 100,
         exposureComp = 0.1,
     }: ThreeSceneProps,
     ref
