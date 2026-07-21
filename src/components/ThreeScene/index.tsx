@@ -1,9 +1,8 @@
-import { Suspense, useMemo, useRef, forwardRef, useImperativeHandle, useCallback, useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Suspense, useMemo, useRef, forwardRef, useImperativeHandle, useCallback } from "react";
+import { Canvas } from "@react-three/fiber";
 import { ContactShadows, Environment, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 
-// 
 import { CameraManager } from "./CameraManager";
 import { CaptureHelper } from "./CaptureHelper";
 import { StudioLightFixture } from "./StudioLightFixture";
@@ -18,8 +17,6 @@ import {
 import { DynamicCameraZoom } from "./DynamicCameraZoom";
 
 type ThreeSceneProps = {
-
-
     lightEnabled: boolean;
     selectedModel: "model1_female" | "model2_male" | "model3_milkchocolate" | "model4_serum" | "model5_cosmetic";
 
@@ -51,20 +48,8 @@ export type ThreeSceneHandle = {
 
 const LIVE_MULT = 600;
 
-function LiveExposure({ aperture, shutter, iso, compensation }: { aperture: number; shutter: number; iso: number; compensation: number }) {
-    const { gl } = useThree();
-    useEffect(() => {
-        const ev = Math.log2((aperture * aperture) / shutter);
-        const exposure = iso / 100 / Math.pow(2, ev - compensation);
-        gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = exposure * LIVE_MULT;
-    }, [aperture, shutter, iso, compensation, gl]);
-    return null;
-}
-
 const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeScene(
     {
-
         lightEnabled,
         selectedModel,
         keyLightEnabled,
@@ -130,7 +115,15 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
     }, [reflectorRotation, reflectorDistance, reflectorHeight]);
 
     return (
-        <Canvas shadows camera={{ fov: 5 }} gl={{ preserveDrawingBuffer: true }}>
+        <Canvas
+            shadows
+            camera={{ fov: 5 }}
+            gl={{ preserveDrawingBuffer: true }}
+            onCreated={({ gl }) => {
+                gl.toneMapping = THREE.ACESFilmicToneMapping;
+                gl.toneMappingExposure = 0.20;
+            }}
+        >
             {selectedModel === "model1_female" && (
                 <DynamicCameraZoom
                     lightRotation={lightRotation}
@@ -147,15 +140,13 @@ const ThreeScene = forwardRef<ThreeSceneHandle, ThreeSceneProps>(function ThreeS
                 />
             )}
 
-            <LiveExposure aperture={aperture} shutter={shutter} iso={iso} compensation={exposureComp} />
+            {/* Helper Capture yang memproses hasil foto berdasarkan segitiga exposure */}
             <CaptureHelper
                 onReady={handleCaptureReady}
                 exposureComp={exposureComp}
                 liveMult={LIVE_MULT}
-                iso={iso}
-                aperture={aperture}
-                shutter={shutter}
             />
+
             <CameraManager selectedModel={selectedModel} />
 
             <color attach="background" args={["#2b2b2b"]} />
